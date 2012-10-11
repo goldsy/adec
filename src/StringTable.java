@@ -8,7 +8,8 @@
 public class StringTable {
     private String[] words = null;
     
-    private int capacity = 10007;
+    //private int capacity = 10007;
+    private int capacity = 100003;
     
 	/**
 	 * Class ctor.
@@ -30,44 +31,47 @@ public class StringTable {
      * The string to store.
      */
 	public void insert(String s) {
-        int targetIndex = getTargetIndex(s);
-        
-        // DEBUG
-        //System.out.println("Target Index: "  + targetIndex);
-        
-        if (words[targetIndex] == null) {
-            // The bucket is available so store the value.
-        	words[targetIndex] = s;
-        }
-        else {
-        	// Calculate the skip value and find the next available bucket.
-        	int skipValue = getSkipValue(s);
-            
+        if (!contains(s)) {
+        	int targetIndex = getTargetIndex(s);
+
         	// DEBUG
-        	System.out.println("Skip Value: " + skipValue);
-            
-        	// The target was already checked, so init to 1.
-            int bucketsChecked = 1;
-            
-            while (bucketsChecked <= capacity) {
-            	targetIndex += skipValue;
-                ++bucketsChecked;
-                
-            	// Check if we need to wrap the index.
-                if (targetIndex >= capacity) {
-                	targetIndex = (targetIndex - capacity);
-                }
-                
-            	if (words[targetIndex] == null) {
-            		// The bucket is available so store the value.
-            		words[targetIndex] = s;
-                    return;
-            	}
-            }
-            
-            // We blew out the hash table.
-            System.out.println("WE BLEW OUT THE HASH TABLE.");
-            System.exit(1);
+        	//System.out.println("Target Index: "  + targetIndex);
+
+        	if (words[targetIndex] == null) {
+        		// The bucket is available so store the value.
+        		words[targetIndex] = s;
+        		return;
+        	}
+        	else {
+        		// Calculate the skip value and find the next available bucket.
+        		int skipValue = getSkipValue(s);
+
+        		// DEBUG
+        		//System.out.println("Skip Value: " + skipValue);
+
+        		// The target was already checked, so init to 1.
+        		int bucketsChecked = 1;
+
+        		while (bucketsChecked <= capacity) {
+        			targetIndex += skipValue;
+        			++bucketsChecked;
+
+        			// Check if we need to wrap the index.
+        			if (targetIndex >= capacity) {
+        				targetIndex = (targetIndex - capacity);
+        			}
+
+        			if (words[targetIndex] == null) {
+        				// The bucket is available so store the value.
+        				words[targetIndex] = s;
+        				return;
+        			}
+        		}
+
+        		// We blew out the hash table.
+        		System.out.println("WE BLEW OUT THE HASH TABLE.");
+        		System.exit(1);
+        	}
         }
 	}
 	
@@ -150,13 +154,27 @@ public class StringTable {
      * This method returns the skip value for the specified string.
      */
 	private int getSkipValue(String s) {
+        // DEBUG
+		//System.out.println("Getting skip value for [" + s + "]");
+        
         // Grab just the first 3 chars (if there are 3).
-		String temp = s.substring(0, 3);
+		String temp = s.substring(0, Math.min(3, s.length()));
         
 		// DEBUG
-		System.out.println("Skip String [" + temp + "]");
+		//System.out.println("Skip String [" + temp + "]");
         
-        // Add the values of the 3 characters together and mod by 30.
-		return ((temp.charAt(0) + temp.charAt(1) + temp.charAt(2)) % 30);
+        int skipValue = temp.charAt(0);
+        
+        if (temp.length() >= 2) {
+        	skipValue += temp.charAt(1);
+            
+        	if (temp.length() >= 3) {
+        		skipValue += temp.charAt(2);
+        	}
+        }
+        
+        // Add the values of the 3 characters together and mod by 30. Finally
+        // add 1 so that a zero skip is never used.
+		return ((skipValue % 30) + 1);
 	}
 }

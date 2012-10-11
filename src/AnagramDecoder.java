@@ -99,9 +99,25 @@ public class AnagramDecoder {
 	 */
     public static void decode(String beginning, String ending) {
     	if (ending.length() <= 1) {
+    		if (beginning.length() > 0) {
+    			if (beginning.substring(beginning.length() - 1).equals(" ")) {
+    				if(!lastWordExists(beginning) 
+    						|| phraseAlreadyFound(beginning)) {
+    					// The last word does not exist and therefore this cannot be
+    					// a valid anagram or the overall phrase has already been
+    					// calculated.
+    					return;
+    				}
+    			}
+    		}
+    		
     		if (lastWordExists(beginning + ending)
     				&& !phraseAlreadyFound(beginning + ending)) {
     			System.out.println("[" + beginning + ending + "]");
+                
+    			// Save the entire beginning so that another permutation
+    			// doesn't try this same set of words.
+    			foundWords.insert(beginning + ending);
     		}
     	}
     	else {

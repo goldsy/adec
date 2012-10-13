@@ -11,6 +11,9 @@ public class StringTable {
     //private int capacity = 10007;
     private int capacity = 100003;
     
+    // This stores the number of values.
+    private int used = 0;
+    
 	/**
 	 * Class ctor.
 	 */
@@ -32,6 +35,15 @@ public class StringTable {
      */
 	public void insert(String s) {
         if (!contains(s)) {
+            // Increment the used count. We know that it will succeed because
+        	// if there isn't enough space the table will resize.
+        	++used;
+            
+            // If the load exceeds 70% resize to preserve performance.
+        	if (load() > 70) {
+        		resize();
+        	}
+            
         	int targetIndex = getTargetIndex(s);
 
         	// DEBUG
@@ -40,6 +52,7 @@ public class StringTable {
         	if (words[targetIndex] == null) {
         		// The bucket is available so store the value.
         		words[targetIndex] = s;
+                
         		return;
         	}
         	else {
@@ -64,6 +77,7 @@ public class StringTable {
         			if (words[targetIndex] == null) {
         				// The bucket is available so store the value.
         				words[targetIndex] = s;
+                        
         				return;
         			}
         		}
@@ -176,5 +190,27 @@ public class StringTable {
         // Add the values of the 3 characters together and mod by 30. Finally
         // add 1 so that a zero skip is never used.
 		return ((skipValue % 30) + 1);
+	}
+    
+	
+    /**
+     * Returns the load factor of the table.
+     * 
+     * @return
+     * This method returns an integer value corresponding to the load factor
+     * of the table.
+     */
+	private int load() {
+        // Multiply by 100 so the load can be returned as an int. We aren't
+		// making watches here. We just need a threshold to trigger the resize
+		// before out performance dips in the table.
+        return ((100 * used) / capacity);
+	}
+    
+	
+	private void resize() {
+		// Resize the table and rehash the old values from the old array into
+		// the new array.
+        // TODO: (goldsy) FINISH ME.
 	}
 }

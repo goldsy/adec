@@ -79,6 +79,8 @@ public class AnagramDecoder {
 					}
 				}
 			}
+            
+			br.close();
 		}
         catch (Exception e) {
         	System.err.println("Error attempting to load dictionary: " + 

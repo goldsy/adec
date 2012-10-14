@@ -115,7 +115,7 @@ public class AnagramDecoder {
     		
     		if (lastWordExists(beginning + ending)
     				&& !phraseAlreadyFound(beginning + ending)) {
-    			System.out.println("[" + beginning + ending + "]");
+    			System.out.println(beginning + ending);
                 
     			// Save the entire beginning so that another permutation
     			// doesn't try this same set of words.

@@ -10,6 +10,7 @@ public class StringTable {
     
     //private int capacity = 10007;
     private int capacity = 100003;
+    //private int capacity = 100;
     
     // This stores the number of values.
     private int used = 0;
@@ -26,6 +27,23 @@ public class StringTable {
         }
 	}
 
+    
+    /**
+     * This ctor is used during a resize.  It will create a new object with
+     * the specified size.
+     * 
+     * @param initialCapacity
+     * Specifies the initial capacity of the table.
+     */
+	private StringTable(int initialCapacity) {
+        capacity = initialCapacity;
+        words = new String[capacity];
+        
+        // Init the array values.
+        for (int i = 0; i < words.length; ++i) {
+        	words[i] = null;
+        }
+	}
 	
     /**
      * This method inserts the specified string into the hash table.
@@ -82,9 +100,13 @@ public class StringTable {
         			}
         		}
 
-        		// We blew out the hash table.
-        		System.out.println("WE BLEW OUT THE HASH TABLE.");
-        		System.exit(1);
+                // If capacity number of buckets were checked then do a resize
+        		// on the array and retry the insert. This will only happen
+        		// in cases when the capacity isn't a prime number and therefore
+        		// a the double hash skip won't hit all of the buckets in the
+        		// array.
+                resize();
+                insert(s);
         	}
         }
 	}
@@ -154,6 +176,7 @@ public class StringTable {
         // DEBUG
 		//System.out.println(s.hashCode());
         
+        // Absolute this value because the hash code may be negative.
         return (Math.abs(s.hashCode() % capacity));
 	}
     
@@ -203,14 +226,53 @@ public class StringTable {
 	private int load() {
         // Multiply by 100 so the load can be returned as an int. We aren't
 		// making watches here. We just need a threshold to trigger the resize
-		// before out performance dips in the table.
+		// before our performance dips in the table.
         return ((100 * used) / capacity);
 	}
     
+    
+	/**
+	 * This method gets the underlying array in the string table.
+     * 
+	 * @return
+     * This method returns a reference to the string array.
+	 */
+    private String[] getArray() {
+    	return words;
+    }
+    
 	
+    /**
+     * This method resizes the array of the hash table by roughly doubling its
+     * size.
+     */
 	private void resize() {
 		// Resize the table and rehash the old values from the old array into
 		// the new array.
-        // TODO: (goldsy) FINISH ME.
+		int newCapacity = (2 * capacity);
+        
+		//System.out.println("WE ARE RESIZING THE STRING TABLE!!!!");
+        
+		//String[] temp = new String[newCapacity];
+        
+        // Init the array values.
+        //for (int i = 0; i < temp.length; ++i) {
+        	//temp[i] = null;
+        //}
+        
+        StringTable resizedTable = new StringTable(newCapacity);
+        
+        for (int i = 0; i < words.length; ++i) {
+        	// Traverse the old array and rehash those values into the new
+        	// array.
+        	if (words[i] != null) {
+        		resizedTable.insert(words[i]);
+        	}
+        }
+        
+        // After the old values have been rehashed into the new larger table
+        // set this table's array to the larger array.
+        words = resizedTable.getArray();
+        capacity = newCapacity;
 	}
 }

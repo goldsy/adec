@@ -45,6 +45,7 @@ public class StringTable {
         }
 	}
 	
+    
     /**
      * This method inserts the specified string into the hash table.
      * 
@@ -129,6 +130,7 @@ public class StringTable {
         	return false;
         }
         else if (words[targetIndex].equals(s)) {
+            // String was found.
         	return true;
         }
         else {
@@ -148,11 +150,13 @@ public class StringTable {
                 }
                 
             	if (words[targetIndex] == null) {
-            		// There is nothing in the target bucket, the word does not exist.
+            		// There is nothing in the target bucket, the word does 
+            		// not exist.
             		return false;
             	}
                 
             	if (words[targetIndex].equals(s)) {
+                    // The string was found in another bucket.
             		return true;
             	}
             }
@@ -165,6 +169,7 @@ public class StringTable {
     
     /**
      * This method returns the target bucket index for the specified string.
+     * 
      * @param s
      * The string whose target index should be determined.
      * 
@@ -176,7 +181,8 @@ public class StringTable {
         // DEBUG
 		//System.out.println(s.hashCode());
         
-        // Absolute this value because the hash code may be negative.
+        // Absolute this value because the hash code may be negative. Negatives
+		// don't work so well as indexes into arrays.
         return (Math.abs(s.hashCode() % capacity));
 	}
     
@@ -225,8 +231,9 @@ public class StringTable {
      */
 	private int load() {
         // Multiply by 100 so the load can be returned as an int. We aren't
-		// making watches here. We just need a threshold to trigger the resize
-		// before our performance dips in the table.
+		// making watches here. The nearest percent will do. We just need a 
+		// threshold to trigger the resize before our performance dips in the 
+		// table.
         return ((100 * used) / capacity);
 	}
     
@@ -248,18 +255,16 @@ public class StringTable {
      */
 	private void resize() {
 		// Resize the table and rehash the old values from the old array into
-		// the new array.
+		// the new array. This likely won't be a prime, but I set the initial
+		// value of the array to be wicked big, and I'm concerned about 
+		// performance not necessarily space.
 		int newCapacity = (2 * capacity);
         
 		//System.out.println("WE ARE RESIZING THE STRING TABLE!!!!");
         
-		//String[] temp = new String[newCapacity];
-        
-        // Init the array values.
-        //for (int i = 0; i < temp.length; ++i) {
-        	//temp[i] = null;
-        //}
-        
+        // Create a new StringTable with the new capacity. Use the new object
+		// to initialize the array, then take ownership of the array and leave
+		// the temporary StringTable for the GC to cleanup. 
         StringTable resizedTable = new StringTable(newCapacity);
         
         for (int i = 0; i < words.length; ++i) {

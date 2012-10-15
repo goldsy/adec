@@ -21,6 +21,7 @@ public class AnagramDecoder {
     // This stores the original string to be unscrambled.
     public static String origString;
     
+    
 	/**
 	 * Entry point for the program.
 	 * 
@@ -100,7 +101,10 @@ public class AnagramDecoder {
 	 * The ending part of the anagram.
 	 */
     public static void decode(String beginning, String ending) {
+        // Check if the ending has 
     	if (ending.length() <= 1) {
+            // If the beginning string has any characters it needs to be checked
+    		// for word existence.
     		if (beginning.length() > 0) {
     			if (beginning.substring(beginning.length() - 1).equals(" ")) {
     				if(!lastWordExists(beginning) 
@@ -113,6 +117,9 @@ public class AnagramDecoder {
     			}
     		}
     		
+            // If the last word exists, and hasn't already been found then a
+    		// valid anagram has been found.  Otherwise drop out of the
+    		// function.
     		if (lastWordExists(beginning + ending)
     				&& !phraseAlreadyFound(beginning + ending)) {
     			System.out.println(beginning + ending);

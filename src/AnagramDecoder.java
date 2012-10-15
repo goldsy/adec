@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * This class is the entry point for the Anagram Decoder project.
  * 
- * @author Jeff
+ * @author Jeff Goldsworthy
  *
  */
 public class AnagramDecoder {

@@ -2,15 +2,14 @@
 /**
  * This class implements a hash-based existence table.
  * 
- * @author Jeff
+ * @author Jeff Goldsworthy
  *
  */
 public class StringTable {
     private String[] words = null;
     
-    //private int capacity = 10007;
+    // Initial capacity. It's wicked big so that resize is unlikely.
     private int capacity = 100003;
-    //private int capacity = 100;
     
     // This stores the number of values.
     private int used = 0;
